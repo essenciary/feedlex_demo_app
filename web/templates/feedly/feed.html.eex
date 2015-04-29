@@ -1,0 +1,7 @@
+<h2>Feed details</h2>
+
+<ul class="list-group">
+  <%= for {key, value} <- @feed do %>
+    <li class="list-group-item"><%= key %>: <%= value %></li>
+  <% end %>
+</ul>

@@ -1,0 +1,32 @@
+<h2>Your Feedly Subscriptions</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>
+        Name
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for subscription <- @subscriptions do %>
+      <tr>
+        <td>
+          <img src="<%= subscription["visualUrl"] || "../../images/feedly_logo.png" %>" alt="<%= subscription["title"] %>" style="width: 24px; height: 24px; margin-right: 10px;" />
+          <%= subscription["title"] %>
+          <a class="btn btn-link btn-xs pull-right" target="new" href="<%= subscription["website"] %>">View website</a>
+          <a class="btn btn-link btn-xs pull-right" href="<%= feedly_feed_path(Endpoint, :show_feed, URI.encode_www_form(subscription["id"])) %>">Details</a>
+          <a class="btn btn-link btn-xs pull-right" href="<%= feedly_feed_articles_path(Endpoint, :feed_articles, URI.encode_www_form(subscription["id"])) %>">Articles</a>
+
+          <%= unless Enum.empty?(subscription["categories"]) do %>
+          <div style="margin-top: 8px;">
+            <%= for category <- subscription["categories"] do %>
+              <a class="btn btn-link btn-xs" target="new" href="#"><%= category["label"] %></a>
+            <% end %>
+          </div>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

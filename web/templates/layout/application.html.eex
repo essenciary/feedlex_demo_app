@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Essenciary</title>
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="/">Home</a></li>
+          <li><a href="<%= feedly_subscriptions_path(Endpoint, :subscriptions) %>">Subscriptions</a></li>
+        </ul>
+        <span class="logo"></span>
+      </div>
+
+      <%= if get_flash(@conn, :notice) do %>
+      <div class="flash_notice alert alert-success">
+        <%= get_flash(@conn, :notice) %>
+      </div>
+      <% end %>
+      <%= if get_flash(@conn, :alert) do %>
+      <div class="flash_error alert alert-danger">
+        <%= get_flash(@conn, :error) %>
+      </div>
+      <% end %>
+
+      <%= @inner %>
+
+      <div class="footer">
+
+      </div>
+
+    </div> <!-- /container -->
+    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+    <script>require("web/static/js/app")</script>
+  </body>
+</html>
