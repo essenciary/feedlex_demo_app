@@ -1,4 +1,6 @@
-# WebUi
+Demo app for the feedlex Feedly API client (https://github.com/essenciary/feedlex)
+
+Still work in progress. 
 
 To start your new Phoenix application:
 
