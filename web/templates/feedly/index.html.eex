@@ -1,0 +1,15 @@
+<%= if not @authenticated do %>
+<a href="<%= feedly_path(@conn, :authorize) %>" class="btn btn-default btn-lg btn-block">
+  <span class="glyphicon pocket" aria-hidden="true">
+    <img src="images/feedly_logo.png" style="height: 32px; width: 32px" />
+  </span>
+  Login to Feedly
+</a>
+<%= else %>
+<a href="<%= feedly_path(@conn, :logoff) %>" class="btn btn-default btn-lg btn-block">
+  <span class="glyphicon pocket" aria-hidden="true">
+    <img src="images/feedly_logo.png" style="height: 32px; width: 32px" />
+  </span>
+  Logout from Feedly
+</a>
+<% end %>

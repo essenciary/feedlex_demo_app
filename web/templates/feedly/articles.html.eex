@@ -1,0 +1,8 @@
+<h2><%= @feed_contents["title"] %></h2>
+<%= for item <- @feed_contents["items"] do
+  render "_article.html", item: item
+end %>
+
+<%= if @feed_contents["continuation"] do %>
+  <a href="<%= feedly_feed_articles_path(Endpoint, :feed_articles, URI.encode_www_form @feed_contents["id"]) %>?continuation=<%= @feed_contents["continuation"] %>">Next</a>
+<% end %>
