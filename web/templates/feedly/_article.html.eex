@@ -4,7 +4,7 @@
 <% end %>
 <p class="content"><%=
   key = if @item["content"], do: "content", else: "summary"
-  safe @item[key]["content"]
+  @item[key]["content"]
 %></p>
 
 <hr style="height: 4px;" />
