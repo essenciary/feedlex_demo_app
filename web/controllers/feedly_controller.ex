@@ -5,14 +5,14 @@ defmodule FeedlexDemo.FeedlyController do
     if params["state"] == "waiting-callback" do
       case Feedlex.Auth.access_token(code: params["code"], state: "waiting-refresh-and-access-token") do
         {:ok, response} ->
-          {mgs, s, _} = :erlang.now
+          {mgs, s, _} = :erlang.timestamp
 
           conn
           |> put_session(:feedly_refresh_token, response["refresh_token"])
           |> put_session(:feedly_access_token, response["access_token"])
           |> put_session(:feedly_token_expiration, mgs * 1_000_000 + s + response["expires_in"])
           |> put_flash(:notice, "You have successfully logged into Feedly")
-          |> redirect to: FeedlexDemo.Router.Helpers.feedly_path(conn, :index)
+          |> redirect(to: FeedlexDemo.Router.Helpers.feedly_path(conn, :index))
         true ->
           text conn, "Feedly Authentication Failed"
       end
@@ -24,12 +24,12 @@ defmodule FeedlexDemo.FeedlyController do
   def refresh(conn, _params) do
     case Feedlex.Auth.refresh_access_token(refresh_token: get_session(conn, :feedly_refresh_token)) do
       {:ok, response} ->
-        {mgs, s, _} = :erlang.now
+        {mgs, s, _} = :erlang.timestamp
 
         conn
         |> put_session(:feedly_access_token, response["access_token"])
         |> put_session(:feedly_token_expiration, mgs * 1_000_000 + s + response["expires_in"])
-        |> json response
+        |> json(response)
       true ->
         text conn, "Feedly Token Refresh Failed"
     end
@@ -44,7 +44,7 @@ defmodule FeedlexDemo.FeedlyController do
     |> delete_session(:feedly_token_expiration)
     |> delete_session(:feedly_subscriptions)
     |> put_flash(:notice, "You have successfully logged off from Feedly")
-    |> redirect to: FeedlexDemo.Router.Helpers.feedly_path(conn, :index)
+    |> redirect(to: FeedlexDemo.Router.Helpers.feedly_path(conn, :index))
   end
 
   def subscriptions(conn, _params) do
@@ -93,7 +93,7 @@ defmodule FeedlexDemo.FeedlyController do
     if is_nil access_token(conn) do
       false
     else
-      {mgs, s, _} = :erlang.now
+      {mgs, s, _} = :erlang.timestamp
       if get_session(conn, :feedly_token_expiration) > (mgs * 1_000_000 + s) do
         true
       else
