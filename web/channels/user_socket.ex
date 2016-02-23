@@ -2,7 +2,7 @@ defmodule FeedlexDemo.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "rooms:*", FeedlexDemo.RoomChannel
+  channel "livestream:*", FeedlexDemo.LivestreamChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

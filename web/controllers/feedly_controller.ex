@@ -71,13 +71,19 @@ defmodule FeedlexDemo.FeedlyController do
   end
 
   def feed_articles(conn, params) do
-    filters = %{unread_only: true}
-    filters = if params["continuation"], do: Dict.merge(filters, %{continuation: params["continuation"]})
-
-    case Feedlex.Stream.content(access_token: access_token(conn), feed_id: params["feed_id"], filters: filters) do
+    filters = Map.take(params, [:count, :ranked, :unread_only, :newer_than, :continuation])
+    case Feedlex.Stream.content(
+      access_token: access_token(conn),
+      feed_id: params["feed_id"],
+      filters: filters
+    ) do
       {:ok, feed_contents} ->
-        json conn, feed_contents
-        render conn, "articles.html", feed_contents: feed_contents
+        #json conn, feed_contents
+        render conn, "articles.html", %{
+          feed_contents: feed_contents,
+          feed_id: params["feed_id"],
+          filters: filters
+        }
     end
   end
 

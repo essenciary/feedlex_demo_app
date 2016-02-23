@@ -5,7 +5,7 @@
 // and connect at the socket path in "lib/my_app/endpoint.ex":
 import {Socket} from "phoenix"
 
-let socket = new Socket("/socket", {params: {token: window.userToken}})
+let socket = new Socket("/socket", {})
 
 // When you connect, you'll often need to authenticate the client.
 // For example, imagine you have an authentication plug, `MyAuth`,
@@ -54,7 +54,27 @@ let socket = new Socket("/socket", {params: {token: window.userToken}})
 socket.connect()
 
 // Now that you are connected, you can join channels with a topic:
-let channel = socket.channel("topic:subtopic", {})
+let channel = socket.channel("livestream:all", {})
+let feedId = $("#feed-title").attr("data-feed-id")
+let feedFilters = $("#feed-title").attr("data-feed-filters") || {}
+let feedArticles = $("#feed-articles")
+
+setInterval(function(){
+    let lastUpdated = feedArticles.attr("data-updated")
+    channel.push("new_articles", {
+        "last_updated": lastUpdated,
+        "feedly_access_token": feedlyAccessToken,
+        "feed_id": feedId,
+        "filters": feedFilters
+    })
+}, 5 * 60 * 1000); // Poll every 5 minutes
+
+channel.on("new_articles", payload => {
+    console.log(payload)
+    feedArticles.prepend(payload.body)
+    feedArticles.attr("data-updated", payload.last_updated)
+})
+
 channel.join()
   .receive("ok", resp => { console.log("Joined successfully", resp) })
   .receive("error", resp => { console.log("Unable to join", resp) })

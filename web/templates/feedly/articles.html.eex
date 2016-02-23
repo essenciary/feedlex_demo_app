@@ -1,8 +1,21 @@
-<h2><%= @feed_contents["title"] %></h2>
+<div id="feed-title" class="page-header" data-feed-id="<%= @feed_id %>"
+  data-feed-filters="<%= Plug.Conn.Query.encode(@filters) %>">
+  <h1><%= @feed_contents["title"] %></h1>
+</div>
+
+<ul id="feed-articles" class="list-group"
+  data-updated="<%= @feed_contents["updated"] %>">
 <%= for item <- @feed_contents["items"] do
   render "_article.html", item: item
 end %>
+</ul>
 
 <%= if @feed_contents["continuation"] do %>
-  <a href="<%= feedly_feed_articles_path(@conn, :feed_articles, URI.encode_www_form @feed_contents["id"]) %>?continuation=<%= @feed_contents["continuation"] %>">Next</a>
+<nav>
+  <ul class="pagination pull-right">
+    <li>
+      <a aria-label="Next" href="<%= feedly_feed_articles_path(@conn, :feed_articles, URI.encode_www_form @feed_contents["id"]) %>?continuation=<%= @feed_contents["continuation"] %>">Next</a>
+    </li>
+  </ul>
+</nav>
 <% end %>
