@@ -1,3 +1,3 @@
-defmodule WebUi.PageView do
-  use WebUi.Web, :view
+defmodule FeedlexDemo.PageView do
+  use FeedlexDemo.Web, :view
 end

@@ -15,8 +15,8 @@
           <img src="<%= subscription["visualUrl"] || "../../images/feedly_logo.png" %>" alt="<%= subscription["title"] %>" style="width: 24px; height: 24px; margin-right: 10px;" />
           <%= subscription["title"] %>
           <a class="btn btn-link btn-xs pull-right" target="new" href="<%= subscription["website"] %>">View website</a>
-          <a class="btn btn-link btn-xs pull-right" href="<%= feedly_feed_path(Endpoint, :show_feed, URI.encode_www_form(subscription["id"])) %>">Details</a>
-          <a class="btn btn-link btn-xs pull-right" href="<%= feedly_feed_articles_path(Endpoint, :feed_articles, URI.encode_www_form(subscription["id"])) %>">Articles</a>
+          <a class="btn btn-link btn-xs pull-right" href="<%= feedly_feed_path(@conn, :show_feed, URI.encode_www_form(subscription["id"])) %>">Details</a>
+          <a class="btn btn-link btn-xs pull-right" href="<%= feedly_feed_articles_path(@conn, :feed_articles, URI.encode_www_form(subscription["id"])) %>">Articles</a>
 
           <%= unless Enum.empty?(subscription["categories"]) do %>
           <div style="margin-top: 8px;">

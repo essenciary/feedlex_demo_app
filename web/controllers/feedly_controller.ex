@@ -1,7 +1,5 @@
-defmodule WebUi.FeedlyController do
-  use WebUi.Web, :controller
-
-  plug :action
+defmodule FeedlexDemo.FeedlyController do
+  use FeedlexDemo.Web, :controller
 
   def index(conn, params) do
     if params["state"] == "waiting-callback" do
@@ -14,7 +12,7 @@ defmodule WebUi.FeedlyController do
           |> put_session(:feedly_access_token, response["access_token"])
           |> put_session(:feedly_token_expiration, mgs * 1_000_000 + s + response["expires_in"])
           |> put_flash(:notice, "You have successfully logged into Feedly")
-          |> redirect to: WebUi.Router.Helpers.feedly_path(conn, :index)
+          |> redirect to: FeedlexDemo.Router.Helpers.feedly_path(conn, :index)
         true ->
           text conn, "Feedly Authentication Failed"
       end
@@ -46,7 +44,7 @@ defmodule WebUi.FeedlyController do
     |> delete_session(:feedly_token_expiration)
     |> delete_session(:feedly_subscriptions)
     |> put_flash(:notice, "You have successfully logged off from Feedly")
-    |> redirect to: WebUi.Router.Helpers.feedly_path(conn, :index)
+    |> redirect to: FeedlexDemo.Router.Helpers.feedly_path(conn, :index)
   end
 
   def subscriptions(conn, _params) do
