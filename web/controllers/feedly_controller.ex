@@ -7,10 +7,13 @@ defmodule FeedlexDemo.FeedlyController do
         {:ok, response} ->
           {mgs, s, _} = :erlang.timestamp
 
+          {:ok, session_pid} = Agent.start_link fn -> %{} end
+
           conn
           |> put_session(:feedly_refresh_token, response["refresh_token"])
           |> put_session(:feedly_access_token, response["access_token"])
           |> put_session(:feedly_token_expiration, mgs * 1_000_000 + s + response["expires_in"])
+          |> put_session(:session_pid, :erlang.term_to_binary(session_pid) |> Base.encode64)
           |> put_flash(:notice, "You have successfully logged into Feedly")
           |> redirect(to: FeedlexDemo.Router.Helpers.feedly_path(conn, :index))
         true ->
@@ -37,6 +40,10 @@ defmodule FeedlexDemo.FeedlyController do
 
   def logoff(conn, _param) do
     Feedlex.Auth.revoke_token(refresh_token: get_session(conn, :feedly_refresh_token))
+
+    Agent.stop :erlang.binary_to_term(
+      get_session(conn, :session_pid) |> Base.decode64!
+    )
 
     conn
     |> delete_session(:feedly_access_token)
@@ -72,17 +79,35 @@ defmodule FeedlexDemo.FeedlyController do
 
   def feed_articles(conn, params) do
     filters = Map.take(params, [:count, :ranked, :unread_only, :newer_than, :continuation])
+    token = access_token(conn)
     case Feedlex.Stream.content(
-      access_token: access_token(conn),
+      access_token: token,
       feed_id: params["feed_id"],
       filters: filters
     ) do
       {:ok, feed_contents} ->
         #json conn, feed_contents
+        session = fetch_session(conn)
+        session = Map.merge(session.private.plug_session,
+          %{feed_id: params["feed_id"],
+            filters: filters})
+
+        pid_bin = get_session(conn, :session_pid) |> Base.decode64!
+        pid = :erlang.binary_to_term(pid_bin)
+        if Process.alive?(pid) do
+          Agent.update(
+            pid,
+            &Map.merge(&1, session)
+          )
+        else
+          {:ok, session_pid} = Agent.start_link fn -> session end
+          pid_bin = :erlang.term_to_binary(session_pid) |> Base.encode64
+          put_session(conn, :session_pid, pid_bin)
+        end
+
         render conn, "articles.html", %{
           feed_contents: feed_contents,
-          feed_id: params["feed_id"],
-          filters: filters
+          session_pid: pid_bin
         }
     end
   end

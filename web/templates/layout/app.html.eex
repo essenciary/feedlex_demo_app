@@ -32,7 +32,6 @@
 
     </div> <!-- /container -->
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script>feedlyAccessToken = "<%= Plug.Conn.get_session(@conn, :feedly_access_token) %>"</script>
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>

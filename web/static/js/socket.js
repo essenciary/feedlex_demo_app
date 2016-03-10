@@ -55,28 +55,27 @@ socket.connect()
 
 // Now that you are connected, you can join channels with a topic:
 let channel = socket.channel("livestream:all", {})
-let feedId = $("#feed-title").attr("data-feed-id")
-let feedFilters = $("#feed-title").attr("data-feed-filters") || {}
+let pid = $("#feed-title").attr("data-pid") || {}
 let feedArticles = $("#feed-articles")
 
-setInterval(function(){
-    let lastUpdated = feedArticles.attr("data-updated")
-    channel.push("new_articles", {
-        "last_updated": lastUpdated,
-        "feedly_access_token": feedlyAccessToken,
-        "feed_id": feedId,
-        "filters": feedFilters
+if (feedArticles.length) {
+    setInterval(function(){
+        let lastUpdated = feedArticles.attr("data-updated")
+        channel.push("new_articles", {
+            "last_updated": lastUpdated,
+            "pid": pid
+        })
+    }, 5 * 60 * 1000); // Poll every 5 minutes
+
+    channel.on("new_articles", payload => {
+        console.log(payload)
+        feedArticles.prepend(payload.body)
+        feedArticles.attr("data-updated", payload.last_updated)
     })
-}, 5 * 60 * 1000); // Poll every 5 minutes
 
-channel.on("new_articles", payload => {
-    console.log(payload)
-    feedArticles.prepend(payload.body)
-    feedArticles.attr("data-updated", payload.last_updated)
-})
-
-channel.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join", resp) })
+    channel.join()
+    .receive("ok", resp => { console.log("Joined successfully", resp) })
+    .receive("error", resp => { console.log("Unable to join", resp) })
+}
 
 export default socket

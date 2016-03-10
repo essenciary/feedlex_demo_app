@@ -7,7 +7,7 @@ defmodule FeedlexDemo.LivestreamChannel do
   def join("livestream:all", _message, socket) do
     {:ok, socket}
   end
-  def join("livestream:" <> feed_id, _params, socket) do
+  def join("livestream:" <> _feed_id, _params, socket) do
     # TODO: implement for each feed ID
     {:ok, socket}
   end
@@ -16,19 +16,18 @@ defmodule FeedlexDemo.LivestreamChannel do
     "new_articles",
     %{
       "last_updated" => last_updated,
-      "feedly_access_token" => feedly_access_token,
-      "feed_id" => feed_id,
-      "filters" => filters
+      "pid" => session_pid,
     },
     socket
   ) do
-    filters = Map.merge(filters, %{
+    session = Agent.get(:erlang.binary_to_term(session_pid |> Base.decode64!), &(&1))
+    filters = Map.merge(session.filters, %{
       newer_than: String.to_integer(last_updated) + 1
     })
 
     case Feedlex.Stream.content(
-      access_token: feedly_access_token,
-      feed_id: feed_id,
+      access_token: Map.fetch!(session, "feedly_access_token"),
+      feed_id: session.feed_id,
       filters: filters
     ) do
       {:ok, feed_contents} ->

@@ -1,5 +1,5 @@
-<div id="feed-title" class="page-header" data-feed-id="<%= @feed_id %>"
-  data-feed-filters="<%= Plug.Conn.Query.encode(@filters) %>">
+<div id="feed-title" class="page-header"
+  data-pid="<%= @session_pid %>">
   <h1><%= @feed_contents["title"] %></h1>
 </div>
 
