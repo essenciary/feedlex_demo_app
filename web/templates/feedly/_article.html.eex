@@ -1,10 +1,15 @@
-<h1><%= @item["title"] %></h1>
-<%= if @item["author"] do %>
-  <div class="author">by <%= @item["author"] %></div>
-<% end %>
-<p class="content"><%=
-  key = if @item["content"], do: "content", else: "summary"
-  safe @item[key]["content"]
-%></p>
-
-<hr style="height: 4px;" />
+<li class="list-group-item" data-published="<%= @item["published"] %>">
+  <h4>
+    <% alternate = List.first(@item["alternate"]) %>
+    <b><a href="<%= alternate["href"] %>"><%= @item["title"] %></a></b>
+  </h4>
+  <%= if @item["author"] do %>
+    <div class="author">by <%= @item["author"] %></div>
+  <% end %>
+  <p class="content">
+  <%=
+    key = if @item["content"], do: "content", else: "summary"
+    raw @item[key]["content"]
+  %>
+  </p>
+</li>

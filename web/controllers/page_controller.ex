@@ -1,7 +1,5 @@
-defmodule WebUi.PageController do
-  use WebUi.Web, :controller
-
-  plug :action
+defmodule FeedlexDemo.PageController do
+  use FeedlexDemo.Web, :controller
 
   def index(conn, _params) do
     render conn, "index.html"

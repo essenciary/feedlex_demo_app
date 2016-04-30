@@ -6,17 +6,23 @@
 use Mix.Config
 
 # Configures the endpoint
-config :web_ui, WebUi.Endpoint,
+config :feedlex_demo, FeedlexDemo.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "eFQ8ZrpKvyJBJsSX1ZXOZPFZy76tA7GKky/aO+7XpKBh6ywK+B9Vwd7x78B8H061",
-  debug_errors: false,
-  pubsub: [name: WebUi.PubSub,
+  root: Path.dirname(__DIR__),
+  secret_key_base: "6XWhjV36acsEkleP6sZFLKeMVMYlHEjn+K7wuVczU/R2A0qAIVC2c5ptZHvoWLX+",
+  render_errors: [accepts: ~w(html json)],
+  pubsub: [name: FeedlexDemo.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
+
+# Configure phoenix generators
+config :phoenix, :generators,
+  migration: true,
+  binary_id: false
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
